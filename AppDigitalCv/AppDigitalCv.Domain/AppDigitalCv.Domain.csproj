@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AppDigitalCv.Domain</RootNamespace>
     <AssemblyName>AppDigitalCv.Domain</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -43,6 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountDomainModel.cs" />
+    <Compile Include="AlergiasDomainModel.cs" />
+    <Compile Include="AlergiasPersonalDomainModel.cs" />
     <Compile Include="AsociacionesDomainModel.cs" />
     <Compile Include="ColoniaDomainModel.cs" />
     <Compile Include="CompetenciasTiDomainModel.cs" />

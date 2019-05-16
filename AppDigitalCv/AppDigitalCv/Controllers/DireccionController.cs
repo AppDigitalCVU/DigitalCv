@@ -1,5 +1,6 @@
 ﻿using AppDigitalCv.Business.Interface;
 using AppDigitalCv.Domain;
+using AppDigitalCv.Models;
 using AppDigitalCv.Security;
 using AppDigitalCv.ViewModels;
 using System;
@@ -13,12 +14,13 @@ namespace AppDigitalCv.Controllers
     public class DireccionController : Controller
     {
         IDireccionBusiness IdireccionBusiness;
-
-        public DireccionController(IDireccionBusiness _IdDireccionBusiness)
+        IPersonalBusiness IpersonalBusiness;
+        public DireccionController(IDireccionBusiness _IdDireccionBusiness, IPersonalBusiness _IpersonalBusiness)
         {
             IdireccionBusiness = _IdDireccionBusiness;
+            IpersonalBusiness = _IpersonalBusiness;
 
-        }
+    }
 
         // GET: Direccion
         public ActionResult Index()
@@ -71,8 +73,16 @@ namespace AppDigitalCv.Controllers
             if (ModelState.IsValid)
             {
                 AddEditDireccion(direccionVM);
-                return RedirectToAction("Create", "Personal");
+                ViewBag.Pais = new SelectList(IdireccionBusiness.GetPais(), "IdPais", "StrValor");
+                ViewBag.Estados = new SelectList("");
+                ViewBag.Municipios = new SelectList("");
+                ViewBag.IdColonia = new SelectList("");
+                return View("Create");
             }
+            ViewBag.Pais = new SelectList(IdireccionBusiness.GetPais(), "IdPais", "StrValor");
+            ViewBag.Estados = new SelectList("");
+            ViewBag.Municipios = new SelectList("");
+            ViewBag.IdColonia = new SelectList("");
             return View("Create");
         }
 
@@ -100,7 +110,7 @@ namespace AppDigitalCv.Controllers
         [HttpPost]
         public ActionResult ConsultarMunicipiosByEstado(int idEstado)
         {
-            List<MunicipioDomainModel> municipiosDM = IdireccionBusiness.GetMunicipioByIdEstado(idEstado);
+            List<MunicipioDomainModel> municipiosDM = IdireccionBusiness.GetMunicipioByIdEstado(idEstado).OrderBy(s=>s.StrValor).ToList<MunicipioDomainModel>();
             List<MunicipioVM> municipiosVM = new List<MunicipioVM>();
 
             AutoMapper.Mapper.Map(municipiosDM, municipiosVM);
@@ -116,7 +126,7 @@ namespace AppDigitalCv.Controllers
         [HttpPost]
         public ActionResult ConsultarColoniasByMunicipio(int idMunicipio)
         {
-            List<ColoniaDomainModel> coloniaDM = IdireccionBusiness.GetColoniaByMunicipio(idMunicipio);
+            List<ColoniaDomainModel> coloniaDM = IdireccionBusiness.GetColoniaByMunicipio(idMunicipio).OrderBy(c=>c.StrValor).ToList<ColoniaDomainModel>();
             List<ColoniaVM> coloniasVM = new List<ColoniaVM>();
 
             AutoMapper.Mapper.Map(coloniaDM, coloniasVM);
@@ -141,22 +151,120 @@ namespace AppDigitalCv.Controllers
         /// <returns> Regresa un valor boleano </returns>
         public bool AddEditDireccion(DireccionVM direccionVM)
         {
+            bool respuesta = false;
+            int IdPersonal = SessionPersister.AccountSession.IdPersonal;
             DireccionDomainModel direccionDomainModel = new DireccionDomainModel();
             AutoMapper.Mapper.Map(direccionVM, direccionDomainModel);///hacemos el mapeado de la entidad
-            return IdireccionBusiness.AddUpdateDireccion(direccionDomainModel);
+            respuesta= IdireccionBusiness.AddUpdateDireccion(direccionDomainModel);
+            DireccionDomainModel direccionMD = IdireccionBusiness.GetDireccionInsertada(direccionDomainModel);
+            IpersonalBusiness.AddUpdatePersonalDireccion(direccionMD,IdPersonal);
+            return respuesta;
         }
 
         #endregion
 
         #region Consultar Datos de Direccion
-
+      
         public JsonResult ConsultarDatosDireccion()
         {
-            var datosDireccion = IdireccionBusiness.GetDatosDireccion(3); //////////////modificacion temporal
+            int IdPersonal = SessionPersister.AccountSession.IdPersonal;
+            var datosDireccion = IdireccionBusiness.GetDireccion(IdPersonal); 
             return Json(datosDireccion, JsonRequestBehavior.AllowGet);
         }
 
         #endregion
+
+        #region  Consultar los datos del estado de los habitos personales
+
+        [HttpGet]
+        public JsonResult GetDireccion(DataTablesParam param)
+        {
+            int IdentityPersonal = SessionPersister.AccountSession.IdPersonal;
+            List<DireccionDomainModel> direcciones = new List<DireccionDomainModel>();
+
+            int pageNo = 1;
+            if (param.iDisplayStart >= param.iDisplayLength)
+            {
+                pageNo = (param.iDisplayStart / param.iDisplayLength) + 1;
+            }
+
+            int totalCount = 0;
+            if (param.sSearch != null)
+            {
+                direcciones = IdireccionBusiness.GetDireccion(IdentityPersonal).Where(p => p.StrCalle.Contains(param.sSearch)).ToList();
+               
+
+            }
+            else
+            {
+                totalCount = IdireccionBusiness.GetDireccion(IdentityPersonal).Count();
+
+
+                direcciones = IdireccionBusiness.GetDireccion(IdentityPersonal).OrderBy(p => p.StrCalle)
+                    .Skip((pageNo - 1) * param.iDisplayLength).Take(param.iDisplayLength).ToList();
+
+            }
+            return Json(new
+            {
+                aaData = direcciones,
+                sEcho = param.sEcho,
+                iTotalDisplayRecords = direcciones.Count(),
+                iTotalRecords = direcciones.Count()
+
+            }, JsonRequestBehavior.AllowGet);
+
+        }
+
+        #endregion
+
+
+        #region Vista Parcial Eliminar
+        /// <summary>
+        /// Este metodo se encarga de presentar los datos a la vista que se van a eliminar
+        /// </summary>
+        /// <param name="idEliminar">recibe un identificador de la direccion</param>
+        /// <returns>regresa una direccion  en una vista</returns>
+        public ActionResult GeDireccion(int IdDireccion)
+        {
+            int IdPersonal = SessionPersister.AccountSession.IdPersonal;
+            DireccionDomainModel direccionDM = IdireccionBusiness.GetDireccionPersonal(IdDireccion, IdPersonal);
+            
+            if (direccionDM != null)
+            {
+                DireccionVM direccionVM = new DireccionVM();
+                AutoMapper.Mapper.Map(direccionDM, direccionVM);
+                return PartialView("_Eliminar", direccionVM);
+            }
+            return View();
+        }
+        #endregion
+        #region Eliminar Direccion de  la Base de datos
+        /// <summary>
+        /// Este metodo se encarga de presentar los datos a la vista que se van a eliminar
+        /// </summary>
+        /// <param name="DireccionVM">recibe un identificador de la direccion</param>
+        /// <returns>regresa una direccion en una vista</returns>
+        public ActionResult EliminarDireccion(DireccionVM direccionVM)
+        {
+            int idPersonal = SessionPersister.AccountSession.IdPersonal;
+            DireccionDomainModel direccionDM = IdireccionBusiness.GetDireccionPersonal(direccionVM.IdDireccion, idPersonal);
+            if (direccionDM != null)
+            {
+                if (IpersonalBusiness.UpdateCampoDireccionId(idPersonal))
+                {
+                    IdireccionBusiness.DeleteDireccion(direccionDM);
+                }
+                
+            }
+            ViewBag.Pais = new SelectList(IdireccionBusiness.GetPais(), "IdPais", "StrValor");
+            ViewBag.Estados = new SelectList("");
+            ViewBag.Municipios = new SelectList("");
+            ViewBag.IdColonia = new SelectList("");
+            return View("Create");
+        }
+        #endregion
+
+
 
     }
 }

@@ -108,6 +108,14 @@ namespace AppDigitalCv.Infraestructure
             //Deporte Personal
             CreateMap<DeportePersonalDomainModel, DeportePersonalVM>();
             CreateMap<DeportePersonalVM, DeportePersonalDomainModel>();
+            //Alergias
+            CreateMap<AlergiasVM, AlergiasDomainModel>();
+            CreateMap<AlergiasDomainModel, AlergiasVM>();
+            //Alergias Personal
+            CreateMap<AlergiasPersonalVM, AlergiasPersonalDomainModel>();
+            CreateMap<AlergiasPersonalDomainModel, AlergiasPersonalVM>();
+         
+            
         }
 
 

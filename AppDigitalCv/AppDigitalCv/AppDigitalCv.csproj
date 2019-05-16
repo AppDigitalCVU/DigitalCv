@@ -14,7 +14,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AppDigitalCv</RootNamespace>
     <AssemblyName>AppDigitalCv</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
@@ -68,10 +68,8 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
-
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Linq" />
-
     <Reference Include="System.Drawing" />
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Runtime.Serialization" />
@@ -82,6 +80,7 @@
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.Helpers.dll</HintPath>
       <Private>True</Private>
@@ -108,6 +107,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WebHelpers.Mvc5, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\WebHelpers.Mvc5.2.1.0\lib\net45\WebHelpers.Mvc5.dll</HintPath>
       <Private>True</Private>
@@ -176,6 +176,7 @@
     <Content Include="Content\animate.min.css" />
     <Content Include="Content\css\cardview.css" />
     <Content Include="Content\css\Ionicons.css" />
+    <Content Include="Content\css\media-queries\media-queries.css" />
     <Content Include="Content\estilo.css" />
     <Content Include="Content\js\plugins\jquery\jquery.min.js" />
     <Content Include="Content\themes\base\accordion.css" />
@@ -227,11 +228,11 @@
     <Content Include="Content\toastr.scss" />
     <Content Include="Content\toastr.less" />
     <Content Include="Imagenes\conferencias.png" />
+    <Content Include="Imagenes\cursos.jpg" />
     <Content Include="Imagenes\educacion_continua1.jpg" />
     <Content Include="Imagenes\educacion_continua2.png" />
     <Content Include="Imagenes\escudoUt.png" />
     <Content Include="Imagenes\escudo_uttt.jpg" />
-    <Content Include="Imagenes\formacion_docente.jpg" />
     <Content Include="Imagenes\formacion_docente_experiencia_docente.png" />
     <Content Include="Imagenes\formacion_docente_experiencia_profesional.png" />
     <Content Include="Imagenes\formacion_docente_produccion_academica.png" />
@@ -374,6 +375,7 @@
     <Content Include="Scripts\SignOut\signout-session.js" />
     <Content Include="Scripts\toastr.js" />
     <Content Include="Scripts\toastr.min.js" />
+    <Content Include="Scripts\Validate\Alergias\validate-alergias-form.js" />
     <Content Include="Scripts\Validate\Asociaciones\validate-asociaciones-form.js" />
     <Content Include="Scripts\Validate\Asociaciones\validate-asociaciones-regExp.js" />
     <Content Include="Scripts\Validate\Block\validate-block-click.js" />
@@ -391,6 +393,7 @@
     <Content Include="Scripts\Validate\EstadoCivil\validate-estado-civil-radio.js" />
     <Content Include="Scripts\Validate\Hijos\validate-hijos-form.js" />
     <Content Include="Scripts\Validate\Hijos\validate-hijos-regExp.js" />
+    <Content Include="Scripts\Validate\IdiomasDialectos\validate-idiomas-dialectos-form.js" />
     <Content Include="Scripts\Validate\Personal\validar-personal-create.js" />
     <Content Include="Scripts\Validate\Personal\validate-personal-create-regExp.js" />
     <Content Include="Scripts\Validate\Personal\validate-personal-upload.js" />
@@ -467,6 +470,11 @@
     <Content Include="Views\HabitosPersonales\_Editar.cshtml" />
     <Content Include="Views\HabitosPersonales\_Eliminar.cshtml" />
     <Content Include="Views\HabitosPersonales\Registrar.cshtml" />
+    <Content Include="Views\Alergias\Create.cshtml" />
+    <Content Include="Views\Direccion\_Eliminar.cshtml" />
+    <Content Include="Views\Alergias\_Eliminar.cshtml" />
+    <Content Include="Views\IdiomaDialecto\_Eliminar.cshtml" />
+    <Content Include="Views\IdiomaDialecto\_Editar.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -510,6 +518,8 @@
     <Compile Include="Security\CustomPrincipal.cs" />
     <Compile Include="Security\SessionPersister.cs" />
     <Compile Include="ViewModels\AccountViewModel.cs" />
+    <Compile Include="ViewModels\AlergiasPersonalVM.cs" />
+    <Compile Include="ViewModels\AlergiasVM.cs" />
     <Compile Include="ViewModels\AsociacionesVM.cs" />
     <Compile Include="ViewModels\ColoniaVM.cs" />
     <Compile Include="ViewModels\CompetenciasTiVM.cs" />
@@ -670,7 +680,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Imagenes\Usuarios\" />
-    <Folder Include="Views\Alergias\" />
     <Folder Include="Views\CerrarSesion\" />
   </ItemGroup>
   <ItemGroup>
